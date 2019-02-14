@@ -6,6 +6,7 @@ FSJS project 2 - List Filter and Pagination
 // Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
 const studentList = document.querySelector("ul.student-list");
 const page = document.querySelector('div.page');
+const length = studentList.children.length;
 /***
    This function accespts a list and page argument. Where list is a list to which
    pagination will be applied, and page is the number of the page of results
@@ -26,7 +27,7 @@ function showPage(list, page){
   };
 }
 
-showPage(studentList, 6);
+
 
 
 
@@ -48,7 +49,6 @@ showPage(studentList, 6);
 function appendPageLinks(list){
     const div = document.createElement('div');
     const ul = document.createElement('ul');
-    const length = list.children.length;
     const pages = Math.ceil(length / 10);
     function createLI(page){
       const li = document.createElement('li');
@@ -64,16 +64,26 @@ function appendPageLinks(list){
       ul.appendChild(link);
     }
     page.appendChild(div);
+    return div;
 }
 
-appendPageLinks(studentList);
-
+const menuListDiv = appendPageLinks(studentList);
+const menuListUL = menuListDiv.firstElementChild;
+const menuListLI = menuListUL.children;
 /***
    Create the `appendPageLinks function` to generate, append, and add
    functionality to the pagination buttons.
 ***/
 
-
+menuListUL.addEventListener('click', (e) => {
+      for (let i = 0; i < menuListLI.length; i++){
+      if(menuListLI[i].firstElementChild.className === 'active'){
+        menuListLI[i].firstElementChild.className = '';
+        }
+      }
+      e.target.className = 'active';
+      showPage(studentList, e.target.textContent );
+});
 
 
 
