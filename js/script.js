@@ -5,16 +5,12 @@ FSJS project 2 - List Filter and Pagination
 
 // Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
 const studentList = document.querySelector("ul.student-list");
-
+const page = document.querySelector('div.page');
 /***
-   Add your global variables that store the DOM elements you will
-   need to reference and/or manipulate.
-
-   But be mindful of which variables should be global and which
-   should be locally scoped to one of the two main functions you're
-   going to create. A good general rule of thumb is if the variable
-   will only be used inside of a function, then it can be locally
-   scoped to that function.
+   This function accespts a list and page argument. Where list is a list to which
+   pagination will be applied, and page is the number of the page of results
+   to show. Shows batches of 10. So page 1 shows entries 1 -10, page 2 Shows
+   entires 11-20, etc.
 ***/
 function showPage(list, page){
   const lis = list.children;
@@ -30,7 +26,7 @@ function showPage(list, page){
   };
 }
 
-showPage(studentList, 3);
+showPage(studentList, 6);
 
 
 
@@ -49,8 +45,28 @@ showPage(studentList, 3);
        "invoke" the function
 ***/
 
+function appendPageLinks(list){
+    const div = document.createElement('div');
+    const ul = document.createElement('ul');
+    const length = list.children.length;
+    const pages = Math.ceil(length / 10);
+    function createLI(page){
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.textContent = page;
+      li.appendChild(a);
+      return li;
+    }
+    div.className = 'pagination';
+    div.appendChild(ul);
+    for (let i = 1; i <= pages; i++){
+      const link = createLI(i);
+      ul.appendChild(link);
+    }
+    page.appendChild(div);
+}
 
-
+appendPageLinks(studentList);
 
 /***
    Create the `appendPageLinks function` to generate, append, and add
