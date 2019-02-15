@@ -7,6 +7,36 @@ FSJS project 2 - List Filter and Pagination
 const studentList = document.querySelector("ul.student-list");
 const page = document.querySelector('div.page');
 const length = studentList.children.length;
+const pages = Math.ceil(length / 10);
+const listItems = studentList.children;
+
+// This function creates and places the search bar.
+
+function createSearch(){
+  const div = document.createElement('div');
+  const input = document.createElement('input');
+  const button = document.createElement('button');
+  const place = document.querySelector('div.page-header');
+  div.className = 'student-search';
+  button.textContent = 'Search'
+  input.placeholder = "Search for Students....."
+  div.appendChild(input);
+  div.appendChild(button);
+  place.appendChild(div);
+  return div;
+}
+
+let searchList = createSearch();
+
+function resultsList(list){
+  let input = searchList.firstElementChild.value;
+  let name = '';
+  let email = '';
+  for (let i = 0; i < list.length; i++){
+    name = list
+  }
+}
+
 /***
    This function accespts a list and page argument. Where list is a list to which
    pagination will be applied, and page is the number of the page of results
@@ -28,28 +58,15 @@ function showPage(list, page){
 }
 
 
-
-
-
 /***
-   Create the `showPage` function to hide all of the items in the
-   list except for the ten you want to show.
-
-   Pro Tips:
-     - Keep in mind that with a list of 54 students, the last page
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when
-       you initially define the function, and it acts as a variable
-       or a placeholder to represent the actual function `argument`
-       that will be passed into the parens later when you call or
-       "invoke" the function
+This function creates the HTML and for the page links and appends it to the
+bottom of the page div. It also sets the class for the div to take advantage of
+the css styling.
 ***/
 
 function appendPageLinks(list){
     const div = document.createElement('div');
     const ul = document.createElement('ul');
-    const pages = Math.ceil(length / 10);
     function createLI(page){
       const li = document.createElement('li');
       const a = document.createElement('a');
@@ -71,8 +88,10 @@ const menuListDiv = appendPageLinks(studentList);
 const menuListUL = menuListDiv.firstElementChild;
 const menuListLI = menuListUL.children;
 /***
-   Create the `appendPageLinks function` to generate, append, and add
-   functionality to the pagination buttons.
+This even listner triggers when one of the page links is clicked. It removes the
+active class from any that were showing active and then applies it to the clicked
+link. In addition is triggers the showPage() function to show only the 10 results
+that should be displaying.
 ***/
 
 menuListUL.addEventListener('click', (e) => {
@@ -85,6 +104,12 @@ menuListUL.addEventListener('click', (e) => {
       showPage(studentList, e.target.textContent );
 });
 
+/// this function set the page to its original state. Limiting the list to the
+///first 10 entires and applying the active class to the frist page link.
 
+function prepPage(){
+  showPage(studentList, 1);
+  menuListLI[0].firstElementChild.className = 'active'
+}
 
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
+prepPage();
