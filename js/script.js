@@ -71,6 +71,9 @@ function getResults(){
       listItems[i].style.display = '';
       results = true;
     }
+    if (input.length < 1){
+      prepPage();
+    }
   }
   if (results !== true){
       document.querySelector('div.results').style.display = '';
