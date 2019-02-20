@@ -11,6 +11,9 @@ const pages = Math.ceil(length / 10);
 const listItems = studentList.children;
 
 
+
+
+
 // This function creates and places the search bar.
 
 function createSearch(){
@@ -44,6 +47,8 @@ function noResults(){
 
 noResults();
 
+
+
 // This function is the search function, it gets the value from the search box Then
 // runs a loop to check it against the student list. If it finds results it changes
 // there display value to an emply string, any that don't match have their display
@@ -72,22 +77,30 @@ function getResults(){
   }
 }
 
-// This is the event listener that calls the 'getResults()' function and hides the 
-// no results message if it was previously exposed.
+// This is the event listener that calls the 'getResults()' function and hides the
+// no results message if it was previously exposed. There are 2, one that is trigged
+// by each key up, and one triggered if the user clicks on search
 
-searchList.querySelector('button').addEventListener('click', () =>{
+searchList.addEventListener('keyup', () =>{
   document.querySelector('div.results').style.display = 'none';
   getResults();
 })
 
+searchList.addEventListener('click', () =>{
+  document.querySelector('div.results').style.display = 'none';
+  getResults();
+})
+
+
+
 /***
-   This function accespts a list and page argument. Where list is a list to which
+   This function accepts a list and page argument. Where list is a list to which
    pagination will be applied, and page is the number of the page of results
    to show. Shows batches of 10. So page 1 shows entries 1 -10, page 2 Shows
    entires 11-20, etc.
 ***/
 function showPage(list, page){
-  const lis = list.children;
+  const lis = list;
   const upper = page * 10;
   const lower = page * 10 - 10;
   for( let i = 0 ; i < lis.length; i++){
@@ -107,7 +120,7 @@ bottom of the page div. It also sets the class for the div to take advantage of
 the css styling.
 ***/
 
-function appendPageLinks(list){
+function appendPageLinks(){
     const div = document.createElement('div');
     const ul = document.createElement('ul');
     function createLI(page){
@@ -127,11 +140,11 @@ function appendPageLinks(list){
     return div;
 }
 
-const menuListDiv = appendPageLinks(studentList);
+let menuListDiv = appendPageLinks();
 const menuListUL = menuListDiv.firstElementChild;
 const menuListLI = menuListUL.children;
 /***
-This even listner triggers when one of the page links is clicked. It removes the
+This event listner triggers when one of the page links is clicked. It removes the
 active class from any that were showing active and then applies it to the clicked
 link. In addition is triggers the showPage() function to show only the 10 results
 that should be displaying.
@@ -144,14 +157,14 @@ menuListUL.addEventListener('click', (e) => {
         }
       }
       e.target.className = 'active';
-      showPage(studentList, e.target.textContent );
+      showPage(listItems, e.target.textContent );
 });
 
 /// this function set the page to its original state. Limiting the list to the
 ///first 10 entires and applying the active class to the frist page link.
 
 function prepPage(){
-  showPage(studentList, 1);
+  showPage(listItems, 1);
   menuListLI[0].firstElementChild.className = 'active'
 }
 
