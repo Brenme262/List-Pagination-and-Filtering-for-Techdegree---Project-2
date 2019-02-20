@@ -10,6 +10,7 @@ const length = studentList.children.length;
 const pages = Math.ceil(length / 10);
 const listItems = studentList.children;
 
+
 // This function creates and places the search bar.
 
 function createSearch(){
@@ -28,14 +29,56 @@ function createSearch(){
 
 let searchList = createSearch();
 
-function resultsList(list){
+// This function creates the no results error message, then sets it to not display
+// by setting it's display value to 'none'. Then the function is called.
+
+function noResults(){
+  let div = document.createElement('div');
+  let p = document.createElement('p');
+  div.className = 'results';
+  p.textContent = 'No Results Found';
+  div.appendChild(p);
+  div.style.display = 'none';
+  studentList.insertAdjacentElement('afterend', div);
+}
+
+noResults();
+
+// This function is the search function, it gets the value from the search box Then
+// runs a loop to check it against the student list. If it finds results it changes
+// there display value to an emply string, any that don't match have their display
+// value set to 'none'. In addition if no results are found it sets the display value
+// on the no results message to an open string, unhiding it.
+
+
+function getResults(){
   let input = searchList.firstElementChild.value;
-  let name = '';
-  let email = '';
-  for (let i = 0; i < list.length; i++){
-    name = list
+  let results = false;
+  for (let i = 0; i < listItems.length; i++){
+    let name = input.toUpperCase();
+    let email = input.toUpperCase();
+    let searchName = listItems[i].querySelector('h3').textContent.toUpperCase();
+    let searchEmail = listItems[i].querySelector('.email').textContent.toUpperCase();
+    if (searchName.indexOf(name) === -1 || searchEmail.indexOf(email) === -1 ){
+      listItems[i].style.display = 'none';
+    }
+    else{
+      listItems[i].style.display = '';
+      results = true;
+    }
+  }
+  if (results !== true){
+      document.querySelector('div.results').style.display = '';
   }
 }
+
+// This is the event listener that calls the 'getResults()' function and hides the 
+// no results message if it was previously exposed.
+
+searchList.querySelector('button').addEventListener('click', () =>{
+  document.querySelector('div.results').style.display = 'none';
+  getResults();
+})
 
 /***
    This function accespts a list and page argument. Where list is a list to which
