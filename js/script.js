@@ -7,10 +7,10 @@ FSJS project 2 - List Filter and Pagination
 const studentList = document.querySelector("ul.student-list");
 const page = document.querySelector('div.page');
 const length = studentList.children.length;
-const pages = Math.ceil(length / 10);
+//const pages = Math.ceil(length / 10);
 const listItems = studentList.children;
-
-
+let resultList = [];
+let counter = 0;
 
 
 
@@ -53,7 +53,10 @@ noResults();
 // runs a loop to check it against the student list. If it finds results it changes
 // there display value to an emply string, any that don't match have their display
 // value set to 'none'. In addition if no results are found it sets the display value
-// on the no results message to an open string, unhiding it.
+// on the no results message to an open string, unhiding it. In addtion is passes
+// all of the items returned from the search to a array called 'resultList'. If the
+// search bar is empty when clicked it runs the prepPage function to return the page
+// to it's initial state.
 
 
 function getResults(){
@@ -69,10 +72,12 @@ function getResults(){
     }
     else{
       listItems[i].style.display = '';
+      resultList.push(listItems[i]);
       results = true;
     }
     if (input.length < 1){
       prepPage();
+
     }
   }
   if (results !== true){
@@ -81,17 +86,47 @@ function getResults(){
 }
 
 // This is the event listener that calls the 'getResults()' function and hides the
-// no results message if it was previously exposed. There are 2, one that is trigged
-// by each key up, and one triggered if the user clicks on search
+// no results message if it was previously exposed. It also creates a second Pagination
+// link div and hides the original when a search is conducted, as well as containing
+// an event listener to make the buttons functional on the new pagination links.
+// There are 2, one that is trigged by each key up, and one triggered if the user
+// clicks on search. I could not get the key up on to function properly, so I have
+// commented it out.
 
-searchList.addEventListener('keyup', () =>{
-  document.querySelector('div.results').style.display = 'none';
-  getResults();
-})
+// searchList.addEventListener('keyup', () =>{
+//   resultList = [];
+//   document.querySelector('div.results').style.display = 'none';
+//   getResults();
+//
+// })
 
-searchList.addEventListener('click', () =>{
+searchList.querySelector('button').addEventListener('click', () =>{
+  if (counter > 0){
+    oldLinks = document.getElementById('resultDiv');
+    oldLinks.remove();
+  }
+  counter += 1;
   document.querySelector('div.results').style.display = 'none';
+  menuListUL.style.display = "none";
+  resultList = [];
   getResults();
+  showPage(resultList, 1);
+  let resultsLinksDiv = appendPageLinks(resultList.length, 'resultLinks');
+  resultsLinksDiv.setAttribute('id', 'resultDiv');
+  let resultsLinksUL = resultsLinksDiv.firstElementChild;
+  let resultsLinksLI = resultsLinksUL.children;
+  if(document.querySelector('div.results').style.display !== ''){
+    resultsLinksLI[0].firstElementChild.className = 'active';
+  }
+  resultsLinksUL.addEventListener('click', (e) => {
+        for (let i = 0; i < resultsLinksLI.length; i++){
+        if(resultsLinksLI[i].firstElementChild.className === 'active'){
+          resultsLinksLI[i].firstElementChild.className = '';
+          }
+        }
+        e.target.className = 'active';
+        showPage(resultList, e.target.textContent );
+  });
 })
 
 
@@ -123,7 +158,7 @@ bottom of the page div. It also sets the class for the div to take advantage of
 the css styling.
 ***/
 
-function appendPageLinks(){
+function appendPageLinks(links, divClass){
     const div = document.createElement('div');
     const ul = document.createElement('ul');
     function createLI(page){
@@ -134,8 +169,9 @@ function appendPageLinks(){
       return li;
     }
     div.className = 'pagination';
+    div.classList.add(divClass);
     div.appendChild(ul);
-    for (let i = 1; i <= pages; i++){
+    for (let i = 1; i <= Math.ceil(links/10); i++){
       const link = createLI(i);
       ul.appendChild(link);
     }
@@ -143,7 +179,7 @@ function appendPageLinks(){
     return div;
 }
 
-let menuListDiv = appendPageLinks();
+let menuListDiv = appendPageLinks(length, 'links');
 const menuListUL = menuListDiv.firstElementChild;
 const menuListLI = menuListUL.children;
 /***
@@ -163,12 +199,19 @@ menuListUL.addEventListener('click', (e) => {
       showPage(listItems, e.target.textContent );
 });
 
+
+
 /// this function set the page to its original state. Limiting the list to the
 ///first 10 entires and applying the active class to the frist page link.
 
 function prepPage(){
   showPage(listItems, 1);
   menuListLI[0].firstElementChild.className = 'active'
+  menuListUL.style.display = "";
+  if(counter > 0){
+    document.querySelector('div.resultLinks').style.display = 'none';
+  }
+  counter = 0;
 }
 
 prepPage();
